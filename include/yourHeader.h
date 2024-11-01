@@ -11,8 +11,8 @@
 *	This version is hardcoded to only accept std::string data, but can be
 *	modified into a template, so other storage types (e.g. dict/map) can
 *	inherit from it. I have not done so, because templates would require
-*	the entire implementation to be in the template header, which hinders
-*	readability.
+*	almost the entire implementation to be in the template header, which
+*	hinders readability.
 */
 
 class YourSet {
@@ -31,7 +31,7 @@ public:
 	bool	add(const std::string &data);
 	// Returns true if the BST already contains this data
 	bool	contains(const std::string &data);
-	//
+	// Removes the node containing data, will return false if not found
 	bool	remove(const std::string &data);
 
 	void	debug();
@@ -45,39 +45,49 @@ private:
 		// Pointers to left and right sub-nodes
 		struct s_Node	*left;
 		struct s_Node	*right;
-		// Boolean to indicate node color (0 = black, 1 = red)
-		bool			red;
+		// Pointer to parent node
+		struct s_Node	*parent;
+		// Boolean to indicate node color (0 = red, 1 = black)
+		bool			black;
 		// Function to initialize new nodes
 		s_Node(const std::string &d) {
 			data = std::string(d);
 			left = NULL;
 			right = NULL;
+			parent = NULL;
 			// Upon creation, a red-black BST node is always red
-			red = true;
+			black = false;
 		}
 	}					t_Node;
 
 	// Internal functions for handling nodes
 
 	// Insert node into root BST
-	bool	__insertnode(t_Node **bst, const std::string &data);
+	bool	__insertnode(t_Node **node, const std::string &data);
 
 	// Delete node and any sub-nodes
-	void	__clearnode(t_Node *bst);
+	void	__clearnode(t_Node *node);
 
 	// Delete only the node that matches the data
-	bool	__deletenode(t_Node **bst, const std::string &data);
+	bool	__deletenode(t_Node **node, const std::string &data);
+
+	// Replaces a node with its successor and deletes the original
+	// (called when a node with two children has to be deleted)
+	void	__successor_switch(t_Node **node);
 
 	// Returns the node that is sub-node to the given node that has matching data
-	t_Node	*__search(t_Node *bst, const std::string &data) const;
+	t_Node	*__search(t_Node *node, const std::string &data) const;
 
 	// Copy node and any sub-nodes
-	t_Node	*__copynode(t_Node *bst);
+	t_Node	*__copynode(t_Node *node);
 
-	// Modify the BST such that it is still a valid red-black BST
-	void	__rebalance(t_Node **bst);
 
-	void	__debug(t_Node *bst);
+	// The following functions are used only for red-black rebalancing
+	void	__rotate_left(t_Node **node);
+
+	void	__rotate_right(t_Node **node);
+
+	void	__debug(t_Node *node);
 
 	// BST Root
 	t_Node	*_root;

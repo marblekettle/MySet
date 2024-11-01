@@ -6,7 +6,7 @@ BUILDDIR = ./build
 SRCDIR = ./src
 SRC = \
 	implementation.cpp \
-	main.cpp
+	main2.cpp
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.cpp | $(BUILDDIR)
 	$(CC) $(FLAGS) -c $< -I$(INCLUDE) -o $@
