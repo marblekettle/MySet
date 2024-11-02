@@ -186,7 +186,7 @@ void	YourSet::__fix_balance(t_Node **node) {
 	}
 }
 
-void	YourSet::__rotate(YourSet::t_Node **node, t_Rotate l_or_r) {	
+void	YourSet::__rotate(YourSet::t_Node **node, t_Dir l_or_r) {
 	YourSet::t_Node	*temp = *node;
 	if (l_or_r == LEFT) {
 		// If node is a leaf or has no right child, it cannot be rotated left
@@ -224,4 +224,25 @@ void	YourSet::__debug(YourSet::t_Node *node) {
 		__debug(node->right);
 	}
 }
-	
+
+YourSet::iterator	YourSet::begin() const{
+	YourSet::iterator	it;
+	it._root = this->_root;
+	t_Node	*node = this->_root;
+	for (node = this->_root; node->left != NULL; node = node->left)
+		it._path_size++;
+	it._path = new t_Dir[it._path_size];
+	for (size_t i = 0; i < it._path_size; i++)
+		it._path[i] = LEFT;
+	return (it);
+}
+
+YourSet::iterator	YourSet::end() const{
+	YourSet::iterator	it;
+	it._root = this->_root;
+	t_Node	*node = this->_root;
+	for (node = this->_root; node->right != NULL; node = node->right)
+		it._path_size++;
+	it.__beyond_end();
+	return (it);
+}

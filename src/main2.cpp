@@ -9,7 +9,13 @@ int	main(void) {
 	set.add("d");
 	set.add("f");
 	set.add("e");
-	YourSet set2 = set;
+	YourSet::iterator it = set.begin();
+	while (it != set.end()) {
+		std::cout << *it++ << std::endl;
+	}
+	set.add("g");
+	std::cout << *it << std::endl;
+//	YourSet set2 = set;
 //	set.add("g");
 //	set.debug();
 //	set.add("e");
@@ -18,8 +24,8 @@ int	main(void) {
 	set.add("f");
 	set.add("b");
 	set.add("a"); */
-	set2.debug();
-	set.debug();
+//	set2.debug();
+//	set.debug();
 //	std::cout << "Contains c: " << set.contains("c") << std::endl;
 //	std::cout << "Contains g: " << set.contains("g") << std::endl;
 //	set.remove("d");
