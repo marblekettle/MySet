@@ -1,19 +1,24 @@
 #ifndef YOURHEADER_H
 # define YOURHEADER_H
-# define NODE YourSet::t_Node
 # include <cstddef>
 # include <string>
 # include <iostream>
 
 /**
-*	The set class stores string data in a red-black binary search tree.
-*	This creates a balance between search time and insert/delete time.
+*	The set class stores string data in an AVL binary search tree. This
+*	provides an optimally balanced BST, with slightly more insertion/deletion
 *	This version is hardcoded to only accept std::string data, but can be
 *	modified into a template, so other storage types (e.g. dict/map) can
 *	inherit from it. I have not done so, because templates would require
 *	almost the entire implementation to be in the template header, which
 *	hinders readability.
 */
+
+//	This enum is used to indicate rotation direction
+typedef enum		e_Rotate {
+	LEFT,
+	RIGHT
+}					t_Rotate;
 
 class YourSet {
 public:
@@ -33,7 +38,7 @@ public:
 	bool	contains(const std::string &data);
 	// Removes the node containing data, will return false if not found
 	bool	remove(const std::string &data);
-
+	// Prints some useful info about the BST
 	void	debug();
 
 private:
@@ -46,47 +51,49 @@ private:
 		struct s_Node	*left;
 		struct s_Node	*right;
 		// Pointer to parent node
-		struct s_Node	*parent;
-		// Boolean to indicate node color (0 = red, 1 = black)
-		bool			black;
+		int				height;
 		// Function to initialize new nodes
 		s_Node(const std::string &d) {
 			data = std::string(d);
 			left = NULL;
 			right = NULL;
-			parent = NULL;
-			// Upon creation, a red-black BST node is always red
-			black = false;
+			height = 1;
 		}
 	}					t_Node;
 
 	// Internal functions for handling nodes
 
 	// Insert node into root BST
-	bool	__insertnode(t_Node **node, const std::string &data);
+	bool	__insert_node(t_Node **node, const std::string &data);
 
 	// Delete node and any sub-nodes
-	void	__clearnode(t_Node *node);
+	void	__clear_node(t_Node *node);
 
 	// Delete only the node that matches the data
-	bool	__deletenode(t_Node **node, const std::string &data);
+	bool	__delete_node(t_Node **node, const std::string &data);
 
 	// Replaces a node with its successor and deletes the original
 	// (called when a node with two children has to be deleted)
-	void	__successor_switch(t_Node **node);
+	void	__successor_switch(t_Node *node);
 
 	// Returns the node that is sub-node to the given node that has matching data
-	t_Node	*__search(t_Node *node, const std::string &data) const;
+	bool	__search(t_Node *node, const std::string &data) const;
 
 	// Copy node and any sub-nodes
-	t_Node	*__copynode(t_Node *node);
+	t_Node	*__copy_node(t_Node *node);
 
 
-	// The following functions are used only for red-black rebalancing
-	void	__rotate_left(t_Node **node);
+	// The following functions are used only for rebalancing
+	// Return the height of a node (0 for leaves)
+	int		__height(t_Node *node);
 
-	void	__rotate_right(t_Node **node);
+	// Rotate nodes to rebalance an unbalanced node
+	void	__fix_balance(t_Node **node);
 
+	// Rotate this node left or right
+	void	__rotate(t_Node **node, t_Rotate l_or_r);
+
+	// Print some info about a node to STDOUT
 	void	__debug(t_Node *node);
 
 	// BST Root
