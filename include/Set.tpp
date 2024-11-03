@@ -4,13 +4,12 @@ namespace My {
 
 	// An empty set only contains one leaf with no data in it
 	template<typename T>
-	Set<T>::Set(): _root(NULL) { std::cout << "hi" << std::endl; }
+	Set<T>::Set(): _root(NULL) {};
 
 	// Clear the entire BST after the set is deleted
 	template<typename T>
 	Set<T>::~Set() {
 		__clear_node(_root);
-		std::cout << "bye" << std::endl;
 	}
 
 	template<typename T>
@@ -35,7 +34,7 @@ namespace My {
 
 	template<typename T>
 	bool	Set<T>::contains(const T &data) {
-		return (__search(_root, data) != NULL);
+		return (__search(data) != NULL);
 	}
 
 	template<typename T>
@@ -153,7 +152,6 @@ namespace My {
 					temp = temp->left;
 				// And going right every time the current node is lower
 				} else
-					
 					temp = temp->right;
 			}
 			// Go with the latest (lowest) potential successor we found
@@ -176,19 +174,23 @@ namespace My {
 	}
 
 	template<typename T>
-	typename Set<T>::t_Node	*Set<T>::__search(Set<T>::t_Node *node,
-		const T &data) const {
-		// When we reach the end of the tree
-		if (node == NULL)
-			return (NULL);
-		// When we find the right node
-		if (data == node->data)
-			return (node);
-		// Otherwise, keep searching
-		Set<T>::t_Node	*left = __search(node->left, data);
-		if (left != NULL)
-			return (left);
-		return (__search(node->right, data));
+	typename Set<T>::t_Node	*Set<T>::__search(const T &data) const {
+		// This one doesn't use recursive tricks, just iterative use of the
+		// properties of a BST
+		Set<T>::t_Node	*node = _root;
+		// If the node doesn't exist or there is no BST, just return NULL
+		while (node != NULL) {
+			// When the data matches, we have the right node
+			if (data == node->data)
+				break ;
+			// If the data is lower than the stored data, go left
+			else if (data < node->data)
+				node = node->left;
+			else
+			// If the data is higher than the stored data, go right
+				node = node->right;
+		}
+		return (node);
 	}
 
 	template<typename T>

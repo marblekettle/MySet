@@ -63,8 +63,8 @@ namespace My {
 		// (called when a node with two children has to be deleted)
 		void	__successor_switch(t_Node *node);
 
-		// Returns the node with given data (sub-node of argument node)
-		t_Node	*__search(t_Node *node, const T &data) const;
+		// Returns the node with given data
+		t_Node	*__search(const T &data) const;
 
 		// Copy node and any sub-nodes
 		// Returns the copied node	
@@ -81,15 +81,12 @@ namespace My {
 		// Rotate this node left or right
 		void	__rotate(t_Node **node, t_Dir l_or_r);
 
-		// Print some info about a node to STDOUT
-		void	__debug(t_Node *node);
-
 	public:
 		// All the canonical form stuff goes here
 		// Default Constructor
 		Set();
 		// Destructor
-		~Set();
+		virtual ~Set();
 		// Copy constructor
 		Set(const Set &x);
 		// Assignment overload
@@ -101,11 +98,12 @@ namespace My {
 		bool	contains(const T &data);
 		// Removes the node containing data, will return false if not found
 		bool	remove(const T &data);
-		// Prints some useful info about the BST
-		void	debug();
 
 		// Iterator sub-class (technically a const_iterator)
 
+		// WARNING: Removing the set element an iterator is pointing to 
+		// INVALIDATES that iterator and will result in undefined behavior
+		// (most likely a SIGSEGV)
 		class iterator : public std::iterator<std::forward_iterator_tag, T> {
 		private:
 			// Stores a pointer to the root of its designated BST for reference
@@ -149,6 +147,7 @@ namespace My {
 		iterator	begin();
 		// Return an iterator pointing at a null node
 		iterator	end();
+
 	};
 
 };

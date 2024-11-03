@@ -5,7 +5,8 @@ INCLUDE = ./include
 BUILDDIR = ./build
 SRCDIR = ./src
 SRC = \
-	tests.cpp \
+	func_test.cpp \
+	perf_test.cpp \
 	main.cpp
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.cpp | $(BUILDDIR)

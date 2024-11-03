@@ -32,12 +32,21 @@ int		main(void) {
 	// This is the code that has to compile
 	std::cout << "________Main Test________\n" << std::endl;
 	your_main();
-
 	// ...But we can do much better
-	std::cout << "________Functional Test________\n" << std::endl;
+
+	std::cout << "\n________Functional Test________\n" << std::endl;
+	// The functional test runs tests on the set's additonal functions
+	// such as the iterator, and use with different data types
 	functional_test();
-	std::cout << "________Performance Test________\n" << std::endl;
+
+	std::cout << "\n________Performance Test________\n" << std::endl;
+	// The performance test fills the set with a larger amount of data
+	// and tests its performance in inserting, searching, iterating over,
+	// and removing data, measuring it against the time performance of
+	// the standard library set
 	performance_test();
+
+	std::cout << "\n________TESTING COMPLETE________\n" << std::endl;
 
 	return (0);
 }
