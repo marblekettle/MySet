@@ -5,9 +5,7 @@ INCLUDE = ./include
 BUILDDIR = ./build
 SRCDIR = ./src
 SRC = \
-	implementation.cpp \
-	iterator.cpp \
-	main2.cpp
+	main.cpp
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.cpp | $(BUILDDIR)
 	$(CC) $(FLAGS) -c $< -I$(INCLUDE) -o $@
