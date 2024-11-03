@@ -47,27 +47,34 @@ private:
 	// Internal functions for handling nodes
 
 	// Insert node into root BST
-	bool	__insert_node(t_Node **node, const std::string &data);
+	// Returns a pointer to the inserted node
+	t_Node	*__insert_node(t_Node **node, const std::string &data);
 
 	// Delete node and any sub-nodes
 	void	__clear_node(t_Node *node);
 
-	// Delete only the node that matches the data
-	bool	__delete_node(t_Node **node, const std::string &data);
+	// Remove only the node that matches the data
+	// Returns a pointer to the node to be removed
+	t_Node	*__delete_node(t_Node **node, const std::string &data);
+
+	// Find a node's successor
+	// Returns a pointer to the successor node
+	t_Node	*__successor(t_Node *node);
 
 	// Replaces a node with its successor and deletes the original
 	// (called when a node with two children has to be deleted)
 	void	__successor_switch(t_Node *node);
 
 	// Returns the node that is sub-node to the given node that has matching data
-	bool	__search(t_Node *node, const std::string &data) const;
+	t_Node	*__search(t_Node *node, const std::string &data) const;
 
 	// Copy node and any sub-nodes
+	// Returns the copied node	
 	t_Node	*__copy_node(t_Node *node);
 
 
 	// The following functions are used only for rebalancing
-	// Return the height of a node (0 for leaves)
+	// Returns the height of a node (0 for leaves)
 	int		__height(t_Node *node);
 
 	// Rotate nodes to rebalance an unbalanced node
@@ -99,57 +106,52 @@ public:
 	// Prints some useful info about the BST
 	void	debug();
 
-	// Iterator sub-class
+	// Iterator sub-class (technically a const_iterator)
 
-	// This iterator is limited to the capabilities of an input iterator
-	// because elements of the set should not be changed, only added and
-	// removed. For more information on how it works, refer to the README
-	
-	// WARNING: Removing from sets causes undefined behavior to
-	// 			existing iterators!
 	class iterator : public std::iterator<
-		std::input_iterator_tag, std::string> {
+		std::forward_iterator_tag, std::string> {
 	private:
 		// Stores a pointer to the root of its designated BST for reference
-		t_Node	*_root;
-		// The path through the BST to the current node
-		t_Dir	*_path;
-		// The size of the path
-		size_t	_path_size;
-	
-		// Returns the current node (given by the path)
-		t_Node	*__find_node() const;
-		// Set the path to lead to the next (successor) node
-		void	__next();
-		// Sets the path to beyond the end of the BST
-		void	__beyond_end();
+		YourSet	*_set;
+		// And a pointer to the target node it is pointing at
+		t_Node	*_node;
 
 	public:
 		// Constructor
 		iterator();
+		// Constructor binding it to an existing set's leftmost node of a BST
+		iterator(YourSet &x);
 		// Destructor
 		~iterator();
 		// Copy constructor
 		iterator(const iterator &x);
-		// Assignment cverload
+		// Assignment overload
+		// ( ex: it1 = it2 )
 		iterator	&operator=(const iterator &x);
 		// Comparison
+		// ( ex: it1 == it2 )
 		bool		operator==(const iterator &x) const;
+		// ( ex: it1 != it2 )
 		bool		operator!=(const iterator &x) const;
 		// Increment
+		// ( ex: ++it )
 		iterator	&operator++();
+		// ( ex: it++ )
 		iterator	operator++(int x);
-		// Dereference
-		std::string	operator*() const;
+		// Dereference (only dereferences as rvalue)
+		// ( ex: str = *it )
+		const std::string	&operator*() const;
+		// ( ex: it->length() )
+		const std::string	*operator->() const;
 
 		// Needs access to the root node of the set BST
 		friend class YourSet;
 	};
 
 	// Return an iterator pointing at the first (left-most) node
-	iterator	begin() const;
-	// Return an iterator pointing BEYOND the end (right-most) node
-	iterator	end() const;
+	iterator	begin();
+	// Return an iterator pointing at a null node
+	iterator	end();
 };
 
 #endif

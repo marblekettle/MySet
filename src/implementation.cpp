@@ -22,15 +22,15 @@ YourSet	&YourSet::operator=(const YourSet &x) {
 // removing. They call the other internal functions which have a slightly
 // different form so that they can be used recursively.
 bool	YourSet::add(const std::string &data) {
-	return (__insert_node(&_root, data));
+	return (__insert_node(&_root, data) != NULL);
 }
 
 bool	YourSet::contains(const std::string &data) {
-	return (__search(_root, data));
+	return (__search(_root, data) != NULL);
 }
 
 bool	YourSet::remove(const std::string &data) {
-	return (__delete_node(&_root, data));
+	return (__delete_node(&_root, data) != NULL);
 }
 
 void	YourSet::debug() {
@@ -39,15 +39,15 @@ void	YourSet::debug() {
 
 // Here we check each node and decides whether to go left or right, as well as
 // applying rotations if imbalances occur at any node
-bool	YourSet::__insert_node(YourSet::t_Node **node,
+YourSet::t_Node	*YourSet::__insert_node(YourSet::t_Node **node,
 	const std::string &data) {
 	// If we've reached a leaf without finding a match, this is where
 	// the node belongs
 	if (*node == NULL) {
 		*node = new YourSet::t_Node(data);
-		return (true);
+		return (*node);
 	}
-	bool out;
+	YourSet::t_Node	*out;
 	// Run same function on left if new data is sorted before the stored data
 	if ((*node)->data > data)
 		out = __insert_node(&((*node)->left), data);
@@ -56,8 +56,8 @@ bool	YourSet::__insert_node(YourSet::t_Node **node,
 		out = __insert_node(&((*node)->right), data);
 	// This means the data is already in the BST
 	else 
-		return (false);
-	if (out) {
+		return (NULL);
+	if (out != NULL) {
 		// Before we retrace, update height of the current node
 		(*node)->height = 1 + std::max(__height((*node)->left),
 			__height((*node)->right));
@@ -78,45 +78,40 @@ void	YourSet::__clear_node(YourSet::t_Node *node) {
 	delete node;
 }
 
-bool	YourSet::__delete_node(YourSet::t_Node **node,
+YourSet::t_Node	*YourSet::__delete_node(YourSet::t_Node **node,
 	const std::string &data) {
 	// Edge case: If there is no BST, nothing is there to delete
 	if (*node == NULL)
-		return (false);
+		return (NULL);
 	// First, find the node that matches the given data, going left or right
 	// depending on data comparison
-	bool out;
+	YourSet::t_Node *out;
 	if ((*node)->data > data)
 		out = __delete_node(&((*node)->left), data);
 	else if ((*node)->data < data)
 		out = __delete_node(&((*node)->right), data);
 	else {
 		// We found it! How many children does it have?
-		if ((*node)->left == NULL && (*node)->right == NULL) {
-			// No children, just delete it
-			delete (*node);
-			(*node) = NULL;
-		} else if ((*node)->left != NULL && (*node)->right != NULL) {
+		if ((*node)->left != NULL && (*node)->right != NULL) {
 			// Two children, successor replaces the node
 			// First switch the node with its successor
 			__successor_switch(*node);
 			// The original data is now in the tree right of the node
 			// Find it and delete it
-			__delete_node(&((*node)->right), data);
+			return (__delete_node(&((*node)->right), data));
 		} else {
-			// Only one child, it replaces the node
-			YourSet::t_Node	*temp = (*node);
-			// Left child
+			// Only one child or no children
+			YourSet::t_Node	*temp = *node;
+			// Left child replaces the node
 			if ((*node)->right == NULL)
-				(*node) = (*node)->left;
-			// Right child
+				*node = (*node)->left;
+			// Right child replaces the node (may be NULL if no children)
 			else
-				(*node) = (*node)->right;
-			delete temp;
+				*node = (*node)->right;
+			return (temp);
 		}
-		return (true);
 	}
-	if (out) {
+	if (out != NULL) {
 		// Before we retrace, update height of the current node
 		(*node)->height = 1 + std::max(__height((*node)->left),
 			__height((*node)->right));
@@ -126,27 +121,54 @@ bool	YourSet::__delete_node(YourSet::t_Node **node,
 	return (out);
 }
 
+YourSet::t_Node	*YourSet::__successor(YourSet::t_Node *node) {
+	YourSet::t_Node	*succ = node->right;
+	if (succ == NULL) {
+		// If we can't go right, it's trickier to find the successor
+		// We have to go through the tree
+		YourSet::t_Node	*temp = _root;
+		while (temp != node && temp != NULL) {
+			// Going left every time the current node is higher, making it a
+			// potential successor
+			if (temp->data > node->data) {
+				succ = temp;
+				temp = temp->left;
+			// And going right every time the current node is lower
+			} else
+				
+				temp = temp->right;
+		}
+		// Go with the latest (lowest) potential successor we found
+		return (succ);
+	} else {
+		// Go one to the right, and then keep going left: that's the successor
+		while (succ->left)
+			succ = succ->left;
+	}
+	return (succ);
+}
+
 void	YourSet::__successor_switch(YourSet::t_Node *node) {
-	// Successor must be the MOST left node that is still to the right of node
-	YourSet::t_Node *succ = node->right;
-	while (succ->left)
-		succ = succ->left;
+	YourSet::t_Node *succ = __successor(node);
 	// Everything can stay the same, just the data needs to be switched around
 	std::string temp = succ->data;
 	succ->data = node->data;
 	node->data = temp;
 }
 
-bool	YourSet::__search(YourSet::t_Node *node,
+YourSet::t_Node	*YourSet::__search(YourSet::t_Node *node,
 	const std::string &data) const {
 	// When we reach the end of the tree
 	if (node == NULL)
-		return (false);
+		return (NULL);
 	// When we find the right node
 	if (data == node->data)
-		return (true);
+		return (node);
 	// Otherwise, keep searching
-	return (__search(node->left, data) || __search(node->right, data));
+	YourSet::t_Node	*left = __search(node->left, data);
+	if (left != NULL)
+		return (left);
+	return (__search(node->right, data));
 }
 
 YourSet::t_Node	*YourSet::__copy_node(YourSet::t_Node *node) {
@@ -225,24 +247,13 @@ void	YourSet::__debug(YourSet::t_Node *node) {
 	}
 }
 
-YourSet::iterator	YourSet::begin() const{
-	YourSet::iterator	it;
-	it._root = this->_root;
-	t_Node	*node = this->_root;
-	for (node = this->_root; node->left != NULL; node = node->left)
-		it._path_size++;
-	it._path = new t_Dir[it._path_size];
-	for (size_t i = 0; i < it._path_size; i++)
-		it._path[i] = LEFT;
+YourSet::iterator	YourSet::begin() {
+	YourSet::iterator	it(*this);
 	return (it);
 }
 
-YourSet::iterator	YourSet::end() const{
-	YourSet::iterator	it;
-	it._root = this->_root;
-	t_Node	*node = this->_root;
-	for (node = this->_root; node->right != NULL; node = node->right)
-		it._path_size++;
-	it.__beyond_end();
+YourSet::iterator	YourSet::end() {
+	YourSet::iterator	it(*this);
+	it._node = NULL;
 	return (it);
 }

@@ -10,11 +10,10 @@ int	main(void) {
 	set.add("f");
 	set.add("e");
 	YourSet::iterator it = set.begin();
-	while (it != set.end()) {
-		std::cout << *it++ << std::endl;
-	}
-	set.add("g");
-	std::cout << *it << std::endl;
+	std::cout << it->length() << std::endl;
+//	while (it != set.end()) {
+//		std::cout << *it++ << std::endl;
+//	}
 //	YourSet set2 = set;
 //	set.add("g");
 //	set.debug();

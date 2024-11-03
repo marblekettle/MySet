@@ -1,2 +1,2 @@
 # MySet
-Replica of std::set
+Simplified replica of std::set using an AVL BST
