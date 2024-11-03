@@ -5,7 +5,7 @@
 *	The main function
 */
 
-int		main(void) {
+int		your_main(void) {
 	//create your set
 	YourSet	set;
 
@@ -25,5 +25,19 @@ int		main(void) {
 		: "did not contain") << std::endl;
 
 	//done
+	return (0);
+}
+
+int		main(void) {
+	// This is the code that has to compile
+	std::cout << "________Main Test________\n" << std::endl;
+	your_main();
+
+	// ...But we can do much better
+	std::cout << "________Functional Test________\n" << std::endl;
+	functional_test();
+	std::cout << "________Performance Test________\n" << std::endl;
+	performance_test();
+
 	return (0);
 }

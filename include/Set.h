@@ -4,11 +4,9 @@
 /**
 *	The set class stores string data in an AVL binary search tree. This
 *	provides an optimally balanced BST, with slightly more insertion/deletion
-*	This version is hardcoded to only accept std::string data, but can be
-*	modified into a template, so other storage types (e.g. dict/map) can
-*	inherit from it. I have not done so, because templates would require
-*	almost the entire implementation to be in the template header, which
-*	hinders readability.
+*	For the sake of readability, I have separated the class declaration
+*	(in this file) and the implementation for both the class and its
+*	iterator (refer to Set.tpp and SetIterator.tpp).
 */
 
 namespace My {
@@ -55,7 +53,7 @@ namespace My {
 
 		// Remove only the node that matches the data
 		// Returns a pointer to the node to be removed
-		t_Node	*__delete_node(t_Node **node, const T &data);
+		t_Node	*__remove_node(t_Node **node, const T &data);
 
 		// Find a node's successor
 		// Returns a pointer to the successor node
@@ -63,13 +61,7 @@ namespace My {
 
 		// Replaces a node with its successor and deletes the original
 		// (called when a node with two children has to be deleted)
-		void	__successor_switch(t_Node *node) {
-			Set<T>::t_Node *succ = __successor(node);
-			// Switch the data of the node with its successor's 
-			T temp = succ->data;
-			succ->data = node->data;
-			node->data = temp;		
-		}
+		void	__successor_switch(t_Node *node);
 
 		// Returns the node with given data (sub-node of argument node)
 		t_Node	*__search(t_Node *node, const T &data) const;

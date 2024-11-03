@@ -4,12 +4,13 @@ namespace My {
 
 	// An empty set only contains one leaf with no data in it
 	template<typename T>
-	Set<T>::Set(): _root(NULL) {}
+	Set<T>::Set(): _root(NULL) { std::cout << "hi" << std::endl; }
 
 	// Clear the entire BST after the set is deleted
 	template<typename T>
 	Set<T>::~Set() {
 		__clear_node(_root);
+		std::cout << "bye" << std::endl;
 	}
 
 	template<typename T>
@@ -39,7 +40,15 @@ namespace My {
 
 	template<typename T>
 	bool	Set<T>::remove(const T &data) {
-		return (__delete_node(&_root, data) != NULL);
+		// We retrieve the node that is to be removed, modifying the BST
+		// in the process
+		Set<T>::t_Node *toremove = __remove_node(&_root, data);
+		// If it isn't found
+		if (toremove == NULL)
+			return (false);
+		// If it was found, deallocate it
+		delete toremove;
+		return (true);
 	}
 
 	// Here we check each node and decides whether to go left or right, as well as
@@ -71,7 +80,7 @@ namespace My {
 			__fix_balance(node);
 		}
 		return (out);
-	};
+	}
 
 	template<typename T>
 	void	Set<T>::__clear_node(Set<T>::t_Node *node) {
@@ -86,7 +95,7 @@ namespace My {
 	}
 
 	template<typename T>
-	typename Set<T>::t_Node	*Set<T>::__delete_node(Set<T>::t_Node **node,
+	typename Set<T>::t_Node	*Set<T>::__remove_node(Set<T>::t_Node **node,
 		const T &data) {
 		// Edge case: If there is no BST, nothing is there to delete
 		if (*node == NULL)
@@ -95,9 +104,9 @@ namespace My {
 		// depending on data comparison
 		Set<T>::t_Node *out;
 		if ((*node)->data > data)
-			out = __delete_node(&((*node)->left), data);
+			out = __remove_node(&((*node)->left), data);
 		else if ((*node)->data < data)
-			out = __delete_node(&((*node)->right), data);
+			out = __remove_node(&((*node)->right), data);
 		else {
 			// We found it! How many children does it have?
 			if ((*node)->left != NULL && (*node)->right != NULL) {
@@ -106,7 +115,7 @@ namespace My {
 				__successor_switch(*node);
 				// The original data is now in the tree right of the node
 				// Find it and delete it
-				return (__delete_node(&((*node)->right), data));
+				return (__remove_node(&((*node)->right), data));
 			} else {
 				// Only one child or no children
 				Set<T>::t_Node	*temp = *node;
@@ -155,6 +164,15 @@ namespace My {
 				succ = succ->left;
 		}
 		return (succ);
+	}
+
+	template<typename T>
+	void	Set<T>::__successor_switch(Set<T>::t_Node *node) {
+		Set<T>::t_Node *succ = __successor(node);
+		// Switch the data of the node with its successor's 
+		T temp = succ->data;
+		succ->data = node->data;
+		node->data = temp;		
 	}
 
 	template<typename T>
