@@ -14,35 +14,15 @@
 *	hinders readability.
 */
 
-//	This enum is used to indicate rotation direction
-typedef enum		e_Rotate {
+//	This enum is used to indicate direction
+typedef enum		e_Dir : bool {
 	LEFT,
 	RIGHT
-}					t_Rotate;
+}					t_Dir;
 
 class YourSet {
-public:
-	// All the canonical form stuff goes here
-	// Default Constructor
-	YourSet();
-	// Destructor
-	~YourSet();
-	// Copy constructor
-	YourSet(const YourSet &x);
-	// Assignment overload
-	YourSet	&operator=(const YourSet &x);
-
-	// Insert data into BST, will return false if data is already present
-	bool	add(const std::string &data);
-	// Returns true if the BST already contains this data
-	bool	contains(const std::string &data);
-	// Removes the node containing data, will return false if not found
-	bool	remove(const std::string &data);
-	// Prints some useful info about the BST
-	void	debug();
 
 private:
-
 	// Struct for BST nodes (branches)
 	typedef struct		s_Node {
 		// String data
@@ -60,6 +40,9 @@ private:
 			height = 1;
 		}
 	}					t_Node;
+
+	// BST Root
+	t_Node	*_root;
 
 	// Internal functions for handling nodes
 
@@ -91,13 +74,82 @@ private:
 	void	__fix_balance(t_Node **node);
 
 	// Rotate this node left or right
-	void	__rotate(t_Node **node, t_Rotate l_or_r);
+	void	__rotate(t_Node **node, t_Dir l_or_r);
 
 	// Print some info about a node to STDOUT
 	void	__debug(t_Node *node);
 
-	// BST Root
-	t_Node	*_root;
+public:
+	// All the canonical form stuff goes here
+	// Default Constructor
+	YourSet();
+	// Destructor
+	~YourSet();
+	// Copy constructor
+	YourSet(const YourSet &x);
+	// Assignment overload
+	YourSet	&operator=(const YourSet &x);
+
+	// Insert data into BST, will return false if data is already present
+	bool	add(const std::string &data);
+	// Returns true if the BST already contains this data
+	bool	contains(const std::string &data);
+	// Removes the node containing data, will return false if not found
+	bool	remove(const std::string &data);
+	// Prints some useful info about the BST
+	void	debug();
+
+	// Iterator sub-class
+
+	// This iterator is limited to the capabilities of an input iterator
+	// because elements of the set should not be changed, only added and
+	// removed. For more information on how it works, refer to the README
+	
+	// WARNING: Removing from sets causes undefined behavior to
+	// 			existing iterators!
+	class iterator : public std::iterator<
+		std::input_iterator_tag, std::string> {
+	private:
+		// Stores a pointer to the root of its designated BST for reference
+		t_Node	*_root;
+		// The path through the BST to the current node
+		t_Dir	*_path;
+		// The size of the path
+		size_t	_path_size;
+	
+		// Returns the current node (given by the path)
+		t_Node	*__find_node() const;
+		// Set the path to lead to the next (successor) node
+		void	__next();
+		// Sets the path to beyond the end of the BST
+		void	__beyond_end();
+
+	public:
+		// Constructor
+		iterator();
+		// Destructor
+		~iterator();
+		// Copy constructor
+		iterator(const iterator &x);
+		// Assignment cverload
+		iterator	&operator=(const iterator &x);
+		// Comparison
+		bool		operator==(const iterator &x) const;
+		bool		operator!=(const iterator &x) const;
+		// Increment
+		iterator	&operator++();
+		iterator	operator++(int x);
+		// Dereference
+		std::string	operator*() const;
+
+		// Needs access to the root node of the set BST
+		friend class YourSet;
+	};
+
+	// Return an iterator pointing at the first (left-most) node
+	iterator	begin() const;
+	// Return an iterator pointing BEYOND the end (right-most) node
+	iterator	end() const;
 };
 
 #endif
