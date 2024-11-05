@@ -216,20 +216,29 @@ namespace My {
 	}
 
 	template<typename T>
-	void	Set<T>::__fix_balance(t_Node **node) {
-		int balance = __height((*node)->left) - __height((*node)->right);
-		if (balance > 1) {
-			// Needs to be rotated to the right
-			if ((*node)->left->left == NULL)
-				// "Un-angle" the child node by rotating it opposite
-				__rotate(&((*node)->left), LEFT);
-			__rotate(node, RIGHT);
-		} else if (balance < -1){
-			// Needs to be rotated to the left
-			if ((*node)->right->right == NULL)
-				// "Un-angle" the child node by rotating it opposite
-				__rotate(&((*node)->right), RIGHT);
-			__rotate(node, LEFT);
+	int		Set<T>::__balance_factor(t_Node *node) {
+		return (__height((node)->right) - __height((node)->left));
+	}
+
+	template<typename T>
+	void	Set<T>::__fix_balance(Set<T>::t_Node **node) {
+		// Keep repeating this until the 
+		while (true) {
+			int balance = __balance_factor(*node);
+			if (balance < -1) {
+				// Needs to be rotated to the right
+				if (__balance_factor((*node)->left) > 0)
+					// "Un-angle" the child node by rotating it opposite
+					__rotate(&((*node)->left), LEFT);
+				__rotate(node, RIGHT);
+			} else if (balance > 1) {
+					// Needs to be rotated to the left
+				if (__balance_factor((*node)->right) < 0)
+					// "Un-angle" the child node by rotating it opposite
+					__rotate(&((*node)->right), RIGHT);
+				__rotate(node, LEFT);
+			} else
+				break ;
 		}
 	}
 
@@ -271,6 +280,20 @@ namespace My {
 		Set<T>::iterator	it(*this);
 		it._node = NULL;
 		return (it);
+	}
+
+	template<typename T>
+	void	Set<T>::__debug(Set<T>::t_Node *node) {
+		if (node == NULL)
+			return ;
+		std::cout << "___" << std::endl;
+		std::cout << node->data << " (" << node->height << ")" << std::endl;
+		std::cout << node << std::endl;
+		std::cout << node->left << " " << node->right << std::endl;
+		if (node->left)
+			__debug(node->left);
+		if (node->right)
+			__debug(node->right);
 	}
 
 };

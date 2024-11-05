@@ -75,6 +75,9 @@ namespace My {
 		// Returns the height of a node (0 for leaves)
 		int		__height(t_Node *node);
 
+		// Return the balance factor of a node
+		int		__balance_factor(t_Node *node);
+
 		// Rotate nodes to rebalance an unbalanced node
 		void	__fix_balance(t_Node **node);
 
@@ -147,6 +150,9 @@ namespace My {
 		iterator	begin();
 		// Return an iterator pointing at a null node
 		iterator	end();
+
+		// Print some information about a node and its sub-nodes
+		void	__debug(t_Node *node);
 
 	};
 
