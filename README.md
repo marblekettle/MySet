@@ -29,14 +29,7 @@ MySet has 5 member functions. In addition, it is in canonical (Coplien) form, me
 - `contains(data)`: Checks if an element with `data` is already inserted into the set - Returns `true` if it is, `false` if not.
 - `remove(data)`: Removes an element with `data` from the set if it does - Returns `true` if the data is successfully removed, `false` if the data was not found.
 
-In order to talk about the other two member functions, we should first mention the iterator object. MySet also has an iterator object that has the properties of a "forward constant iterator". This means the following:
-- It is in canonical form
-- Two iterators can be compared (`==` and `!=` operators)
-- An iterator can be dereferenced as an rvalue: information about what the iterator points to can be extracted (`*` and `->` operators)
-- An iterator can **NOT** be dereferenced as an lvalue: the information an iterator points to can not be modified
-- An iterator can be incremented to point to the next element of a set (`++` operator)
-
-To work with these iterators, MySet has two more member functions:
+MySet also comes with iterators, more information on them in Section **V**. To work with these iterators, MySet has two more member functions:
 - `begin()`: Returns an iterator that points at the first (or lowest) element in the set
 - `end()`: Returns an iterator that points at a nonexistent node that would be placed *beyond* the last (highest) element in the set. If an iterator pointing to the last element of the set is incremented, this is what it will be equal to.
 
@@ -90,4 +83,34 @@ a   d        ->      a   e
 
 In order to determine when a node has to be rotated, every node also has a 'height' property, which represents its distance to the furthest leaf down. Nodes at the end of the tree have a height of 1, since they are considered to be the only nodes between it and its leaves. Every node up from that has a height of 1 plus the greater of its child nodes' height. If we look at the tree in the above example, before its rotation, `a` has a height of 1, `d` has a height of 2, so `b` has a height of 3.
 
-Keeping track of these heights helps us calculate a "Balance Factor" for each node, which is defined as the height of its left child minus the height of its right child. As long as this balance factor is greater than -2 and smaller than 2, the node is considered balanced and does not need to be rotated.
+Keeping track of these heights helps us calculate a "Balance Factor" for each node, which is defined as the height of its right child minus the height of its left child. A negative balance factor means that the BST is "left-heavy", while a positive means it is "right-heavy". As long as this balance factor is greater than -2 and smaller than 2, the node is considered balanced and does not need to be rotated. When a node is out of balance, four scenarios can occur that are balanced as follows:
+
+- The balance factor of the node is positive, and so is that of its child.
+  - > Rotate the node to the left.
+- The balance factor of the node is negative, and so is that of its child.
+  - > Rotate the node to the right.
+- The balance factor of the node is positive, but that of its child is negative.
+  - > Rotate the child node to the right, then rotate the node to the left.
+- The balance factor of the node is negative, but that of its child is positive.
+  - > Rotate the child node to the left, then rotate the node to the right.
+
+The latter two solutions are also called "right-left" and "left-right" rotations. What follows is an example of a "left-right" rotation and how it keeps the BST valid while neuralising the balance factor and reducing the overall height of the tree:
+```
+    b                b                d
+   / \              / \              / \
+  a   e            a   d            b   e
+     / \    ->        / \    ->    / \   \
+    d   f            c   e        a   c   f
+   /                      \
+  c                        f
+```
+After an insertion or deletion, all the nodes whose height may have changed will have to be checked for whether they need to be rebalanced. The convenience of using a recursive algorithm is then that all possibly affected nodes will be reached through backtracking. By running a rebalancing subroutine after every recursion, the whole tree will be rebalanced by the time the backtracking returns to the root.
+
+## V. Iterator
+
+MySet's iterator works as a pointer that can browse through all the data stored in the set in order. The iterator has the properties of a "forward constant iterator". This means the following:
+- It is in canonical form
+- Two iterators can be compared (`==` and `!=` operators)
+- An iterator can be dereferenced as an rvalue: information about what the iterator points to can be extracted (`*` and `->` operators)
+- An iterator can **NOT** be dereferenced as an lvalue: the information an iterator points to can not be modified
+- An iterator can be incremented to point to the next element of a set (`++` operator)
