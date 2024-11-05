@@ -55,9 +55,13 @@ namespace My {
 		// Returns a pointer to the node to be removed
 		t_Node	*__remove_node(t_Node **node, const T &data);
 
-		// Find a node's successor
+		// Find a node's inorder successor
 		// Returns a pointer to the successor node
 		t_Node	*__successor(t_Node *node);
+
+		// Find a node's inorder predecessor
+		// Returns a pointer to the predecessor node
+		t_Node	*__predecessor(t_Node *node);
 
 		// Replaces a node with its successor and deletes the original
 		// (called when a node with two children has to be deleted)
@@ -107,7 +111,9 @@ namespace My {
 		// WARNING: Removing the set element an iterator is pointing to 
 		// INVALIDATES that iterator and will result in undefined behavior
 		// (most likely a SIGSEGV)
-		class iterator : public std::iterator<std::forward_iterator_tag, T> {
+
+		class iterator
+			: public std::iterator<std::bidirectional_iterator_tag, T> {
 		private:
 			// Stores a pointer to the root of its designated BST for reference
 			Set	*_set;
@@ -136,6 +142,11 @@ namespace My {
 			iterator	&operator++();
 			// ( ex: it++ )
 			iterator	operator++(int x);
+			// Decrement
+			// ( ex: --it )
+			iterator	&operator--();
+			// ( ex: it-- )
+			iterator	operator--(int x);
 			// Dereference (only dereferences as rvalue)
 			// ( ex: str = *it )
 			const T	&operator*() const;

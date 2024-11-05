@@ -94,6 +94,24 @@ void	functional_test() {
 		}
 		std::cout << std::endl;
 
+		// Same tests for decrement
+		YourSet::iterator	i3(set.end());
+		while (i3 != set.begin()) {
+			std::cout << *(--i3) << " (";
+			std::cout << i3->length() << ") ";
+			std::cout << (i3 == set.begin() ? "yes" : "no") << std::endl;
+		}
+		std::cout << std::endl;
+
+		YourSet::iterator	i4(set.end());
+		while (i4 != set.begin()) {
+			i4--;
+			std::cout << *(i4) << " (";
+			std::cout << i4->length() << ") ";
+			std::cout << (i4 == set.begin() ? "yes" : "no") << std::endl;
+		}
+		std::cout << std::endl;
+
 		break ;
 	}
 

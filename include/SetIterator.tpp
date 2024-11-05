@@ -41,8 +41,7 @@ namespace My {
 
 	template<typename T>
 	typename Set<T>::iterator	&Set<T>::iterator::operator++() {
-		if (_node == NULL)
-			return (*this);
+		// Set the node to its successor
 		_node = _set->__successor(_node);
 		return (*this);
 	}
@@ -56,6 +55,20 @@ namespace My {
 		return (copy);
 	}
 
+	template<typename T>
+	typename Set<T>::iterator	&Set<T>::iterator::operator--() {
+		// Set the node to its predecessor
+		_node = _set->__predecessor(_node);
+		return (*this);
+	}
+
+	template<typename T>
+	typename Set<T>::iterator	Set<T>::iterator::operator--(int x) {
+		(void)x;
+		Set<T>::iterator	copy(*this);
+		--(*this);
+		return (copy);
+	}
 	template<typename T>
 	const T	&Set<T>::iterator::operator*() const {
 		return (_node->data);

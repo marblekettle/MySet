@@ -72,7 +72,7 @@ namespace My {
 		else 
 			return (NULL);
 		if (out != NULL) {
-			// Before we retrace, update height of the current node
+			// Before we backtrack, update height of the current node
 			(*node)->height = 1 + std::max(__height((*node)->left),
 				__height((*node)->right));
 			// ...And check if this node needs rebalancing (i.e. abs(BF) > 1)
@@ -128,7 +128,7 @@ namespace My {
 			}
 		}
 		if (out != NULL) {
-			// Before we retrace, update height of the current node
+			// Before we backtrack, update height of the current node
 			(*node)->height = 1 + std::max(__height((*node)->left),
 				__height((*node)->right));
 			// ...And check if this node needs rebalancing (i.e. abs(BF) > 1)
@@ -139,6 +139,13 @@ namespace My {
 
 	template<typename T>
 	typename Set<T>::t_Node	*Set<T>::__successor(Set<T>::t_Node *node) {
+		// If node is null, loop back to the begin
+		if (node == NULL) {
+			node = _root;
+			while (node->left)
+				node = node->left;
+			return (node);
+		}
 		Set<T>::t_Node	*succ = node->right;
 		if (succ == NULL) {
 			// If we can't go right, it's trickier to find the successor
@@ -155,13 +162,38 @@ namespace My {
 					temp = temp->right;
 			}
 			// Go with the latest (lowest) potential successor we found
-			return (succ);
 		} else {
 			// Go one to the right, and then keep going left: that's the successor
 			while (succ->left)
 				succ = succ->left;
 		}
 		return (succ);
+	}
+
+	// Symmetrical of __successor
+	template<typename T>
+	typename Set<T>::t_Node	*Set<T>::__predecessor(Set<T>::t_Node *node) {
+		if (node == NULL) {
+			node = _root;
+			while (node->right)
+				node = node->right;
+			return (node);
+		}
+		Set<T>::t_Node	*pred = node->left;
+		if (pred == NULL) {
+			Set<T>::t_Node	*temp = _root;
+			while (temp != node && temp != NULL) {
+				if (temp->data < node->data) {
+					pred = temp;
+					temp = temp->right;
+				} else
+					temp = temp->left;
+			}
+		} else {
+			while (pred->right)
+				pred = pred->right;
+		}
+		return (pred);
 	}
 
 	template<typename T>
