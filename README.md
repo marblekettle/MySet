@@ -108,9 +108,29 @@ After an insertion or deletion, all the nodes whose height may have changed will
 
 ## V. Iterator
 
-MySet's iterator works as a pointer that can browse through all the data stored in the set in order. The iterator has the properties of a "forward constant iterator". This means the following:
-- It is in canonical form
-- Two iterators can be compared (`==` and `!=` operators)
-- An iterator can be dereferenced as an rvalue: information about what the iterator points to can be extracted (`*` and `->` operators)
-- An iterator can **NOT** be dereferenced as an lvalue: the information an iterator points to can not be modified
-- An iterator can be incremented to point to the next element of a set (`++` operator)
+MySet's iterator works as a pointer that can browse through all the data stored in the set in order. The iterator has the properties of a "bidirectional constant iterator". This means the following:
+1. It is in canonical form
+2. Two iterators can be compared (`==` and `!=` operators)
+3. An iterator can be dereferenced as an rvalue: information about what the iterator points to can be extracted (`*` and `->` operators)
+4. An iterator can **NOT** be dereferenced as an lvalue: the information an iterator points to can not be modified
+5. An iterator can be incremented to point to the next element of a set (`++` operator)
+6. An iterator can be decremented to point to the previous element of a set (`--` operator)
+
+Point 4 is what distinguishes a constant iterator from a regular iterator, but it is a necessary property in case of the set. Reassigning a node's data would mean that it belongs elsewhere in the BST, otherwise one could no longer retrieve a sorted order using inorder traversal. However, there is no way to adjust the behavior of a pointer in C++ so that modifying a pointer content will instead result in a removal and consequent insertion of new data. The `std` library specifically makes the node data read-only. A constant iterator has basically the same effect.
+
+Incrementing an iterator means finding the successor of a node. For nodes that have right children, as we've seen before, this is trivial, but otherwise the only option is to retrace steps. 
+
+## VI. Testing
+
+MySet comes with two testing modules to verify that all its functionalities work properly: The first is a functional test, the other a performance test. The functional test is split into 6 sections that each showcase different features:
+1. Copying: Demonstrates how to insert, lookup and remove elements, copy their data from one set to a new one using a constructor and the assignment overload.
+2. Heap Allocation: Demonstrates how the features mentioned in Copying can be used for heap-allocated set objects.
+3. Iterator: Demonstrates the functionality of the iterator and how all its operator overloads function.
+5. Other Datatypes: The other tests focus on use with sets of `std::string`. This part demonstrates how it functions with other datatypes such as integers and classes.
+6. Polymorphism: Demonstrates how derived classes of the set can be used with polymorphism, functioning as valid MySet objects.
+
+The other test, the performance tests, runs four different tests on both MySet and the standard library set object. Each test involves inserting a large amount of data in a predefined order into the sets, which will be found in the `lorem.txt` file, and measures the time elapsed for each before the test is complete. These tests are:
+1. Insertion: The entire dataset is inserted into the set using the `add()` method.
+2. Lookup: Each word in the dataset is verified to be in the set using the `contains()` method.
+3. Iterator: An iterator browses through every single entry in the set by means if increment (the `operator++()` method).
+4. Removal: Each word in the dataset is removed from an already filled set.
