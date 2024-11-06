@@ -46,9 +46,9 @@ void	insertion_test(std::vector<std::string> *split) {
 	delete set2;
 }
 
-void	search_test(std::vector<std::string> *split) {
+void	lookup_test(std::vector<std::string> *split) {
 	struct timeval tv;
-	std::cout << "- Search -" << std::endl;
+	std::cout << "- Lookup -" << std::endl;
 	std::cout << std::endl;
 
 	std::cout << "Testing YourSet" << std::endl;
@@ -206,7 +206,7 @@ void	performance_test() {
 
 	insertion_test(&split);
 	std::cout << std::endl;
-	search_test(&split);
+	lookup_test(&split);
 	std::cout << std::endl;
 	iterator_test(&split);
 	std::cout << std::endl;
